@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Little Hero: Good Deeds</title>
+<style>
+:root {
+  --bg: #fff8e7;
+  --card: #fff;
+  --ink: #1f3d2b;
+  --g: #1f9d6b;
+  --gold: #f5b50a;
+  --bad: #e5484d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10261b;
+    --card: #183828;
+    --ink: #f3f0e0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10261b;
+  --card: #183828;
+  --ink: #f3f0e0;
+}
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+#app {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  gap: 10px;
+  overflow-y: auto;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+.stars {
+  background: var(--gold);
+  color: #4a3500;
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+.dots {
+  display: flex;
+  gap: 4px;
+}
+.dots i {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #0002;
+}
+.dots i.on {
+  background: var(--g);
+}
+.bubble {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--card);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 2px 8px #0002;
+  min-height: 56px;
+  font-size: 17px;
+  line-height: 1.3;
+}
+.bubble b {
+  font-size: 38px;
+}
+.bubble.bad {
+  outline: 3px solid var(--bad);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+.it {
+  background: var(--card);
+  border: 3px solid transparent;
+  border-radius: 20px;
+  padding: 14px 6px;
+  text-align: center;
+  font-size: 52px;
+  box-shadow: 0 3px 0 #0003;
+  cursor: pointer;
+  transition: transform .15s;
+}
+.it small {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.it:active {
+  transform: scale(.94);
+}
+.it.ok {
+  border-color: var(--g);
+  opacity: .55;
+  pointer-events: none;
+}
+.it.ok:after {
+  content: "✅";
+  font-size: 22px;
+  display: block;
+}
+.it.no {
+  animation: sh .4s;
+  border-color: var(--bad);
+}
+@keyframes sh {
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+.btn {
+  background: var(--g);
+  color: #fff;
+  border: 0;
+  border-radius: 30px;
+  padding: 16px 28px;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #0004;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.btn.gold {
+  background: var(--gold);
+  color: #4a3500;
+}
+.card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6vh;
+}
+.card h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+.card p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+.big {
+  font-size: 84px;
+  animation: pop .6s;
+}
+@keyframes pop {
+  0% { transform: scale(.2); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.rw {
+  font-size: 34px;
+  font-weight: 800;
+  color: #b07f00;
+  animation: pop .7s .3s both;
+}
+.val {
+  background: var(--g);
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var L = [
+  {n:"Help Mama",e:"🏠",v:"Helping parents",r:10,m:"Helping Mama and Baba makes Allah happy.",s:[{q:"Mama's room is messy! Tap each thing to put it away.",it:[{e:"🧸",l:"Toys"},{e:"📚",l:"Books"},{e:"👟",l:"Shoes"}]}]},
+  {n:"Mosque Manners",e:"🕌",v:"Respect for the mosque",r:10,m:"The mosque is Allah's house. We keep it clean and calm.",s:[{q:"At the mosque: shoes first, then be quiet and clean.",o:1,it:[{e:"👟",l:"Place shoes neatly"},{e:"🏃",l:"Run inside",x:1,h:"No running! Walk calmly in the mosque."},{e:"🤫",l:"Walk quietly"},{e:"🧹",l:"Pick up trash"}]}]},
+  {n:"Help a Friend",e:"🤝",v:"Helping others",r:10,m:"A good Muslim helps others without being asked.",s:[{q:"Your friend dropped books! Tap each book to pick it up.",it:[{e:"📕",l:"Book"},{e:"📗",l:"Book"},{e:"📘",l:"Book"},{e:"🙈",l:"Walk away",x:1,h:"Don't walk away. A friend needs you!"}]}]},
+  {n:"Kind to Animals",e:"🐱",v:"Mercy to animals",r:15,m:"Allah is merciful to those who are merciful to animals.",s:[{q:"A hungry cat! Get the bowl, then water, then food.",o:1,it:[{e:"🥣",l:"Bowl"},{e:"💧",l:"Water"},{e:"🍫",l:"Chocolate",x:1,h:"Chocolate is bad for cats!"},{e:"🐟",l:"Food"}]}]},
+  {n:"Lost School Bag",e:"🎒",v:"Honesty",r:15,m:"Returning what is not ours is honesty, and Allah loves honest people.",s:[{q:"You found a lost bag. What do you do?",it:[{e:"😈",l:"Keep it",x:1,h:"It isn't ours. Honesty means returning it."},{e:"🔎",l:"Look for a name tag"}]},{q:"The tag says \"Ali\". Who is the owner?",it:[{e:"👧",l:"Sara",x:1,h:"Not Sara. The tag says Ali."},{e:"👦",l:"Ali"},{e:"🧒",l:"Omar",x:1,h:"Not Omar. The tag says Ali."}]}]},
+  {n:"Help Grandma",e:"👵",v:"Respect for elders",r:15,m:"We respect our elders and help them with love.",s:[{q:"Help Grandma step by step: bags, look, then cross.",o:1,it:[{e:"🛍️",l:"Carry the bags"},{e:"📱",l:"Check phone",x:1,h:"Stay focused. Help Grandma safely!"},{e:"👀",l:"Look both ways"},{e:"🚶‍♀️",l:"Cross together"}]}]},
+  {n:"Share Your Food",e:"🍱",v:"Sharing",r:20,m:"Sharing food brings barakah (blessing).",s:[{q:"Your friend is hungry. Open your lunch and share!",o:1,it:[{e:"😋",l:"Eat alone",x:1,h:"Sharing brings barakah!"},{e:"🍱",l:"Open lunch"},{e:"✂️",l:"Split in half"},{e:"🤝",l:"Give to friend"}]}]},
+  {n:"Little Sadaqah",e:"💰",v:"Charity",r:20,m:"Even a small gift for the needy is sadaqah.",s:[{q:"A family needs help. Tap the good things to give.",it:[{e:"👕",l:"Clothes"},{e:"🍚",l:"Rice"},{e:"🗑️",l:"Broken toy",x:1,h:"Give good things that people can use."},{e:"📚",l:"Books"},{e:"🧸",l:"Good toy"}]}]},
+  {n:"Ramadan Kindness",e:"🌙",v:"Ramadan & generosity",r:25,m:"Feeding others in Ramadan earns great reward.",s:[{q:"Prepare iftar! Tap the food.",it:[{e:"🌴",l:"Dates"},{e:"🥛",l:"Water"},{e:"😋",l:"Eat early",x:1,h:"Wait for the adhan, and share first!"},{e:"🍲",l:"Soup"}]},{q:"Now share iftar with your neighbors!",it:[{e:"🏠",l:"Neighbor 1"},{e:"🏡",l:"Neighbor 2"},{e:"🏘️",l:"Neighbor 3"}]}]},
+  {n:"Good Deed Champion",e:"🏆",v:"All values together",r:50,m:"You showed every good value. Mashallah, little hero!",s:[{q:"Show all 5 good deeds!",it:[{e:"🏠",l:"Help Mama"},{e:"🤝",l:"Help a friend"},{e:"🐱",l:"Feed the cat"},{e:"🎒",l:"Return the bag"},{e:"💰",l:"Give sadaqah"}]}]}
+];
+
+var app = document.getElementById("app"), lv = 0, st = 0, stars = 0, cur = [], done = 0, need = 0;
+
+function $(h) { app.innerHTML = h; }
+
+function beep(f) {
+  try {
+    var c = beep.c || (beep.c = new (window.AudioContext || window.webkitAudioContext)());
+    var o = c.createOscillator(), g = c.createGain();
+    o.frequency.value = f;
+    g.gain.value = .07;
+    o.connect(g);
+    g.connect(c.destination);
+    o.start();
+    o.stop(c.currentTime + .12);
+  } catch(e) {}
+}
+
+function shuf(a) {
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1)), t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+  }
+  return a;
+}
+
+function start() {
+  lv = 0; st = 0; stars = 0;
+  $('<div class="card"><div class="big">🌙</div><h1>Little Hero:<br>Good Deeds</h1><p>Bismillah! Do 10 kind deeds and earn stars ⭐</p><button class="btn" id="go">▶ Start</button></div>');
+  document.getElementById("go").onclick = function() { beep(660); stage(); };
+}
+
+function stage() {
+  var Lv = L[lv], S = Lv.s[st];
+  cur = S.o ? S.it.map(function(x, i) { return {x:x, i:i}; }) : shuf(S.it.map(function(x, i) { return {x:x, i:i}; }));
+  done = 0;
+  need = S.it.filter(function(x) { return !x.x; }).length;
+  var d = "";
+  for (var i = 0; i < 10; i++) d += '<i class="' + (i <= lv ? "on" : "") + '"></i>';
+  var g = cur.map(function(c, k) {
+    return '<div class="it" data-k="' + k + '">' + c.x.e + '<small>' + c.x.l + '</small></div>';
+  }).join("");
+  $('<div class="top"><span>Level ' + (lv + 1) + ': ' + Lv.e + ' ' + Lv.n + '</span><span class="stars">⭐ ' + stars + '</span></div><div class="dots">' + d + '</div><div class="bubble" id="bb"><b>🧒</b><span>' + S.q + '</span></div><div class="grid" id="gr">' + g + '</div>');
+  document.getElementById("gr").onclick = function(e) {
+    var el = e.target.closest(".it");
+    if (el) tap(el, +el.dataset.k);
+  };
+}
+
+function say(t, bad) {
+  var b = document.getElementById("bb");
+  b.className = "bubble" + (bad ? " bad" : "");
+  b.lastChild.textContent = t;
+}
+
+function tap(el, k) {
+  var S = L[lv].s[st], c = cur[k], it = c.x;
+  if (it.x) {
+    el.classList.remove("no");
+    void el.offsetWidth;
+    el.classList.add("no");
+    say(it.h, 1);
+    beep(180);
+    return;
+  }
+  if (S.o) {
+    var nx = S.it.filter(function(z, i) {
+      return !z.x && !cur.some(function(q, kk) {
+        return q.i === i && document.querySelectorAll(".it")[kk].classList.contains("ok");
+      });
+    })[0];
+    if (nx && nx !== it) {
+      el.classList.remove("no");
+      void el.offsetWidth;
+      el.classList.add("no");
+      say("Not yet! Follow the steps in order 👆", 1);
+      beep(180);
+      return;
+    }
+  }
+  el.classList.add("ok");
+  done++;
+  beep(500 + done * 80);
+  say(["Great job! 👍", "Mashallah! ✨", "Well done! 🌟", "Keep going! 💪"][done % 4]);
+  if (done >= need) setTimeout(next, 600);
+}
+
+function next() {
+  var Lv = L[lv];
+  if (st < Lv.s.length - 1) {
+    st++;
+    stage();
+    return;
+  }
+  stars += Lv.r;
+  beep(880);
+  $('<div class="top"><span></span><span class="stars">⭐ ' + stars + '</span></div><div class="card"><div class="big">' + Lv.e + '</div><h1>Level ' + (lv + 1) + ' complete!</h1><span class="val">' + Lv.v + '</span><p>' + Lv.m + '</p><div class="rw">+⭐ ' + Lv.r + '</div><button class="btn" id="nx">' + (lv < 9 ? "Next level ▶" : "Finish 🏆") + '</button></div>');
+  document.getElementById("nx").onclick = function() {
+    lv++;
+    st = 0;
+    if (lv > 9) end();
+    else stage();
+  };
+}
+
+function end() {
+  beep(988);
+  $('<div class="card"><div class="big">🏆</div><h1>Good Deed Champion!</h1><p>Mashallah! You earned</p><div class="rw">⭐ ' + stars + '</div><p>Kindness, honesty, sharing and mercy make a true little hero.</p><button class="btn gold" id="rp">↺ Play again</button></div>');
+  document.getElementById("rp").onclick = start;
+}
+
+start();
+</script>
+</body>
+</html>
